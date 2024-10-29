@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulario de Inicio de Sesión y Registro</title>
+  <link rel="stylesheet" href="assets/css/styleslogin.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+
+  <div class="form-container">
+    <!-- Formulario de Inicio de Sesión -->
+    <div class="login-form active">
+      <h2>Inicia Sesión Aquí</h2>
+      <form id="loginForm">
+        <label for="loginUsername">Usuario</label>
+        <input type="text" id="loginUsername" placeholder="Usuario" required>
+        
+        <label for="loginPassword">Contraseña</label>
+        <input type="password" id="loginPassword" placeholder="Contraseña" required>
+        
+        <div class="extra-options">
+          <a href="#">¿Olvidaste tu contraseña?</a>
+          <label>
+            <input type="checkbox"> Recuérdame
+          </label>
+        </div>
+        
+        <button type="submit" class="btn">INICIAR SESIÓN</button>
+        <p>¿No tienes cuenta? <a href="#" onclick="mostrarRegistro()">Regístrate</a></p>
+      </form>
+    </div>
+
+    <!-- Formulario de Registro -->
+    <div class="register-form">
+      <h2>Regístrate Aquí</h2>
+      <form id="registerForm">
+        <label for="name">Nombre</label>
+        <input type="text" id="name" placeholder="Nombre" required>
+        
+        <label for="age">Edad</label>
+        <input type="number" id="age" placeholder="Edad" required>
+        
+        <label for="document">Documento</label>
+        <input type="text" id="document" placeholder="Documento" required>
+        
+        <label for="document-type">Tipo de Documento</label>
+        <select id="documentType">
+          <option value="cedula">Cédula</option>
+          <option value="pasaporte">Pasaporte</option>
+        </select>
+        
+        <label for="phone">Teléfono</label>
+        <input type="tel" id="phone" placeholder="Teléfono" required>
+        
+        <label for="registerUsername">Usuario</label>
+        <input type="text" id="registerUsername" placeholder="Usuario" required>
+        
+        <label for="registerPassword">Contraseña</label>
+        <input type="password" id="registerPassword" placeholder="Contraseña" required>
+        
+        <button type="submit" class="btn">REGISTRAR</button>
+        <p>¿Ya tienes cuenta? <a href="#" onclick="mostrarLogin()">Inicia Sesión</a></p>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Alternar entre formularios
+    function mostrarRegistro() {
+      document.querySelector('.login-form').classList.remove('active');
+      document.querySelector('.register-form').classList.add('active');
+    }
+
+    function mostrarLogin() {
+      document.querySelector('.register-form').classList.remove('active');
+      document.querySelector('.login-form').classList.add('active');
+    }
+
+    // Guardar usuario en localStorage
+    function guardarUsuario(usuario) {
+      localStorage.setItem(usuario.usuario, JSON.stringify(usuario));
+    }
+
+    // Validación en tiempo real para el campo "Documento"
+    let documentTimeout;
+    document.getElementById('document').addEventListener('input', function() {
+      clearTimeout(documentTimeout);
+      documentTimeout = setTimeout(validarDocumento, 3000);
+    });
+
+    function validarDocumento() {
+      const documento = document.getElementById('document').value;
+      const tipoDocumento = document.getElementById('documentType').value;
+
+      if (tipoDocumento === 'cedula' && (documento.length < 7 || documento.length > 10)) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Error de Validación',
+          text: 'La cédula debe tener entre 7 y 10 caracteres.',
+        });
+      } else if (tipoDocumento === 'pasaporte' && (documento.length < 7 || documento.length > 14)) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Error de Validación',
+          text: 'El pasaporte debe tener entre 7 y 14 caracteres.',
+        });
+      }
+    }
+
+    // Registro con validación y mensajes de éxito en SweetAlert2
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const nombre = document.getElementById('name').value;
+      const edad = document.getElementById('age').value;
+      const documento = document.getElementById('document').value;
+      const tipoDocumento = document.getElementById('documentType').value;
+      const telefono = document.getElementById('phone').value;
+      const usuario = document.getElementById('registerUsername').value;
+      const contraseña = document.getElementById('registerPassword').value;
+
+      if (usuario.length < 4 || contraseña.length < 6) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Error de Validación',
+          text: 'El usuario debe tener al menos 4 caracteres y la contraseña al menos 6 caracteres.',
+        });
+        return;
+      }
+
+      const nuevoUsuario = {
+        nombre,
+        edad,
+        documento,
+        tipoDocumento,
+        telefono,
+        usuario,
+        contraseña
+      };
+
+      guardarUsuario(nuevoUsuario);
+      Swal.fire({
+        icon: 'success',
+        title: 'Registro Exitoso',
+        text: '¡Tu cuenta ha sido creada exitosamente!',
+      }).then(() => {
+        mostrarLogin();
+      });
+    });
+
+    // Inicio de sesión con validación usando SweetAlert2
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const usuario = document.getElementById('loginUsername').value;
+      const contraseña = document.getElementById('loginPassword').value;
+
+      const usuarioGuardado = JSON.parse(localStorage.getItem(usuario));
+
+      if (usuarioGuardado && usuarioGuardado.contraseña === contraseña) {
+        Swal.fire({
+          icon: 'success',
+          title: `¡Bienvenido de nuevo, ${usuarioGuardado.nombre}!`,
+          text: 'Has iniciado sesión correctamente.',
+        }).then(() => {
+          // Redirigir al home o realizar la acción de inicio de sesión
+          window.location.href = 'index.html'; // Reemplazar con la URL de su home
+        });
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error de Inicio de Sesión',
+          text: 'Usuario o contraseña incorrectos.',
+        });
+      }
+    });
+  </script>
+
+</body>
+</html>

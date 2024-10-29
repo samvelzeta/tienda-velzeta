@@ -1,0 +1,99 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  background: url('https://i.imgur.com/YMbgd1P.jpg') no-repeat center center;
+  background-size: cover;
+  margin: 0;
+}
+
+.form-container {
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 20px;
+  border-radius: 10px;
+  width: 320px;
+  color: #fff;
+}
+
+.login-form, .register-form {
+  display: none;
+}
+
+.login-form.active, .register-form.active {
+  display: block;
+}
+
+h2 {
+  text-align: center;
+  color: #ff4b5c;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  margin-top: 10px;
+  color: #ddd;
+}
+
+input, select {
+  padding: 10px;
+  margin-top: 5px;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+  background-color: #333;
+  color: #fff;
+}
+
+.extra-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9em;
+  color: #ddd;
+}
+
+.extra-options a {
+  color: #ff4b5c;
+  text-decoration: none;
+}
+
+.extra-options label {
+  display: flex;
+  align-items: center;
+}
+
+.btn {
+  margin-top: 15px;
+  padding: 10px;
+  background-color: #ff4b5c;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  font-size: 1em;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: #ff2e44;
+}
+
+p {
+  text-align: center;
+  margin-top: 10px;
+}
+
+p a {
+  color: #ff4b5c;
+  text-decoration: none;
+}
+  
